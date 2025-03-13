@@ -4,7 +4,7 @@ import requests
 
 
 
-def extract_into_set(folder_path, patent_ids:set):
+def extract_into_set(folder_path, id):
     """
     Extracts patent IDs from all PDF files in the specified folder and adds them to the provided set.
 
@@ -20,8 +20,9 @@ def extract_into_set(folder_path, patent_ids:set):
     # Loop through all files in the specified folder
     for filename in os.listdir(folder_path):
         if filename.endswith(".pdf"):  # Only process PDF files
-            file_path = os.path.join(folder_path, filename)
-            patents_ids.add(file_path)
+            code = os.path.splitext(filename)[0]
+            id.add(code)
+    return id
 
 def check(s:set):
     """
@@ -89,3 +90,7 @@ def download_pdf(collection, fold_name):
                 print(f"Downloaded {patent_number} to {output_file}")
             else:
                 print(f"Failed to download {patent_number}. Status code: {response.status_code}")
+                
+s = set()  # Correct way to initialize a set in Python
+s = extract_into_set("120_file", s)
+

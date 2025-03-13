@@ -3,16 +3,22 @@ import pdf2image
 import json
 import re
 import spacy
+import selenium
+from bs4 import BeautifulSoup
+
+
 
 class docProcessing:
     def __init__(self):
         self.nlp=spacy.load("en_core_web_sm")
         self.json_temp={
             "essential_data":"",
+            "patent_cover":"",
             "background":"",
             "summary":"",
             "visual_desc": "",
-            "detail_desc":""
+            "detail_desc":"",
+            "claims":""
         }
     def pdfConversion(self, file: str):
         """
@@ -30,10 +36,8 @@ class docProcessing:
     def essentialInfo(self, stdment:str) -> list:
         """
         Parse patent text and extract specific fields.
-
         Args:
             text (str): The patent text to parse.
-
         Returns:
             dict: A dictionary containing the extracted fields.
         """
@@ -70,10 +74,8 @@ class docProcessing:
     def section_processing(self, text: str):
         """
         Process the text and extract sections based on titles.
-
         Args:
             text (str): The text containing section titles and content.
-
         Returns:
             None: The extracted sections are stored in `self.json_temp`.
         """
@@ -125,6 +127,23 @@ class docProcessing:
 
             if section_title in ["DETAILED DESCRIPTION", "DESCRIPTION OF EMBODIMENTS"]:
                 self.json_temp["detail_desc"] = doc[end_match:].text
+    
+    def retrieveClaims(self, filename:str):
+        link_template= f"https://ppubs.uspto.gov/dirsearch-public/patents/html/{filename}?source=US-PGPUB&requestToken={token}"
+        driver = webdriver.Chrome(executable_path="/path/to/chromedriver")
+        driver.get(link)
+        time.sleep(2)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        driver.quit()
+        
+        claims_header = soup.find('h3', text='Claims')
+        if claims_header:
+            claims_section = claims_header.find_parent('section')
+            claims_text = claims_section.get_text(separator=' ', strip=True)
+            self.json_temp["claims"]=claims_text
+        else:
+            print("No 'Claims' section found.")
+        
 
     def prodConversion(self, file:str):
         """
@@ -136,21 +155,9 @@ class docProcessing:
         for x in range(len(pages)):
             page_text = pytesseract.image_to_string(pages[x]).replace('\n', ' ').strip()
             if x == 0:
-                info=self.essentialInfo(page_text)
+                self.saveCover(pages[0])
+                self.essentialInfo(page_text[0])
             else:
                 remain += page_text
         self.section_processing(remain)
         return json.dumps(self.json_temp)
-
-
-            
-            
-            
-            
-            
-            
-        
-                
-                        
-
-            

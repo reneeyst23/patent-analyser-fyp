@@ -1,5 +1,44 @@
-def main():
-    print("Hello from patent-analyser-fyp!")
+from bs4 import BeautifulSoup
+
+# Example HTML snippet
+html_content = '''
+<section class="bottom-border padding">
+    <h3>Claims</h3>
+    <p><b>1</b>. A package of one or more absorbent articles, the package comprising a package material, wherein the package material comprises natural fibers and exhibits an MD tensile strength of at least 5.0 kN/m and an MD Stretch of at least 3 percent, each as determined via ISO 1924-3 as modified herein, wherein the package comprises a plurality of panels, including a consumer-facing panel, and wherein the package is sealed. <br /> 
+    <b>2</b>. The package of claim 1, wherein the package material exhibits an MD tensile strength of at least 5 kN/m. <br /> 
+    <b>3</b>. The package of claim 1, wherein the package material exhibits an MD tensile strength of between 5 kN/m and 8.5 kN/m. <br /> 
+    <b>4</b>. The package of claim 1, wherein the package material exhibits a CD tensile strength of between 3 kN/m and 6.5 kN/m. <br /> 
+    <b>5</b>. The package of claim 1, wherein the package material exhibits an MD stretch at break of between 3 and 6.5 percent. <br /> 
+    <b>6</b>. The package of claim 1, wherein the package material exhibits an MD stretch at break of at least 3 percent. <br /> 
+    <b>7</b>. The package of claim 1, wherein the package material exhibits a CD stretch at break of between 4 and 10 percent. <br /> 
+    <b>8</b>. The package of claim 1, wherein the package material has a caliper of between 50 μm to 110 μm. <br /> 
+    <b>9</b>. The package of claim 1, wherein the package material has a basis weight of between 60 and 120 gsm, as measured by the grammage test of ISO 536 as modified herein. <br /> 
+    <b>10</b>. The package of claim 1, wherein the package material comprises between 50 and 100 percent by weight of natural fibers. <br /> 
+    <b>11</b>. The package of claim 1, wherein the package material is recyclable and the package material exhibits a recyclable percentage of at least at least 80 percent, as determined by the Repulpability Test method. <br /> 
+    <b>12</b>. The package of claim 11, wherein the package material is recyclable and the package material exhibits a recyclable percentage of between from about 80 percent to about 99.9 percent. <br /> 
+    <b>13</b>. The package of claim 1, wherein the one or more absorbent articles comprise at least one of feminine hygiene pads, diapers, incontinence pads, diaper pants, adult incontinence briefs. <br /> 
+    <b>14</b>. The package of claim 1, wherein the one or more absorbent articles comprises diapers and the plurality of panels further comprise a bottom panel and wherein the bottom panel comprises a pinch bottom configuration or a Totani™ style configuration. <br /> 
+    <b>15</b>. The package of claim 1, wherein the one or more absorbent articles comprises feminine hygiene articles and the plurality of panels further comprise a bottom panel, and wherein the bottom panel comprises a block bottom configuration or cross-bottom configuration. <br /> 
+    <b>16</b>. The package of claim 1, wherein the package material is recyclable, and the package material exhibits an overall “pass” test ou will it get this
+</section>
+'''
+
+# Parse the HTML content using BeautifulSoup
+soup = BeautifulSoup(html_content, 'html.parser')
+
+# Find the <h3> tag with the text "Claims"
+claims_header = soup.find('h3', text='Claims')
+
+# Check if the header was found
+if claims_header:
+    # Get the parent section containing the <h3> and its content
+    claims_section = claims_header.find_parent('section')
+    
+    # Extract all text within the section
+    claims_text = claims_section.get_text(separator=' ', strip=True)
+    print(claims_text)
+else:
+    print("No 'Claims' section found.")
 
 
 if __name__ == "__main__":

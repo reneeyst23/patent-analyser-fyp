@@ -52,7 +52,7 @@ US
 
 COUNTRY
 US
-
+
 Computer-implemented methods and computer systems are disclosed herein as implemented by a
 controller operatively coupled to a network of electric vehicles. The methods and systems include the
 controller (i) receiving a notification that an electric vehicle is stranded without sufficient power to
@@ -1438,7 +1438,7 @@ by a mobile device associated with the low SOC vehicle, vehicle telematics data.
 
 18. The computer system of claim 16, wherein the predetermined threshold is defined as a percentage
 of the SOC remaining after charging the electric vehicle.
-
+3
 19. The computer system of claim 16, wherein the vicinity is defined as a determined distance that the
 electric vehicle is capable of driving, based upon the SOC remaining in the electric vehicle.
 
