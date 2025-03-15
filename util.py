@@ -128,7 +128,6 @@ class docProcessing:
         # Initialize the PhraseMatcher
         matcher = PhraseMatcher(self.nlp.vocab)  # Case-insensitive matching
         matcher.add("SECTION_TITLES", None, *all_patterns)
-        
         # Process the text
         doc = self.nlp(text)
         matches = sorted(matcher(doc), key=lambda x: x[1])
@@ -172,15 +171,13 @@ class docProcessing:
         input: pdf filename
         output: json format claims
         """
-        token = "eyJzdWIiOiIxZTFhNGE1OS1kN2ZmLTQ1ZjMtOTc1MC0zN2QwNWVmOWE1M2YiLCJ2ZXIiOiI5MmNhNjA2Yy04YTU5LTQ2MjUtOTBhZC0zZDBkN2UxY2I4ZWQiLCJleHAiOjB9"
+        token = "eyJzdWIiOiI4Y2Y1ZjYzNC1mNGUxLTRkYTgtOWVhNy1mYmIzMTM0OGE3NjUiLCJ2ZXIiOiJmODBlOGE4ZS03MTg5LTQ1N2QtOTMxYi05ZjhiZDhlN2E3OGUiLCJleHAiOjB9"
         link_template = f"https://ppubs.uspto.gov/dirsearch-public/patents/html/{filename}?source=US-PGPUB&requestToken={token}"
         gecko_driver_path = "/snap/bin/geckodriver"  
         service = Service(gecko_driver_path)
         driver = webdriver.Firefox(service=service)
-        
         driver.get(link_template)
-        time.sleep(10)
-        driver.quit()
+        time.sleep(3)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         claims_header = soup.find('h3', text='Claims')
         if claims_header:
@@ -189,6 +186,7 @@ class docProcessing:
             self.json_temp["claims"]=claims_text
         else:
             raise KeyError("unable to access claims, wait for token access")
+        driver.quit()
        
 
     def prodConversion(self, file:str):
