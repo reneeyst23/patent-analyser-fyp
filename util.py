@@ -3,14 +3,15 @@ import pdf2image
 import json
 import re
 import spacy
-import selenium
+from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
 from bs4 import BeautifulSoup
-
+import time
 
 
 class docProcessing:
     def __init__(self):
-        self.nlp=spacy.load("en_core_web_sm")
+        #self.nlp=spacy.load("en_core_web_sm")
         self.json_temp={
             "essential_data":"",
             "patent_cover":"",
@@ -42,8 +43,6 @@ class docProcessing:
             dict: A dictionary containing the extracted fields.
         """
         result = {}
-
-
         title_match = re.search(r"\(54\)\s+([^\n]+)", stdment)
         if title_match:
             result["title"] = title_match.group(1).strip()
@@ -74,76 +73,123 @@ class docProcessing:
     def section_processing(self, text: str):
         """
         Process the text and extract sections based on titles.
+        
         Args:
             text (str): The text containing section titles and content.
+        
         Returns:
             None: The extracted sections are stored in `self.json_temp`.
         """
-        # Define the section titles to match
-        section_titles = [
+        section_mapping = {
+        "field": [
             "FIELD",
+            "FIELD OF INVENTION",
+            "FIELD OF THE INVENTION",
+            "TECHNICAL FIELD"
+        ],
+        "background": [
             "BACKGROUND",
-            "SUMMARY", 
-            "SUMMARY OF INVENTION", 
-            "DESCRIPTION OF DRAWINGS", 
-            "DESCRIPTION OF EMBODIMENTS", 
-            "DETAILED DESCRIPTION"
+            "BACKGROUND OF THE INVENTION",
+            "BACKGROUND OF THE DISCLOSURE",
+            "DESCRIPTION OF RELATED ARTS",
+            "TECHNICAL PROBLEM"
+        ],
+        "summary": [
+            "SUMMARY",
+            "SUMMARY OF THE INVENTION",
+            "SUMMARY OF THE DISCLOSURE",
+            "TECHNICAL SOLUTION",
+            "OBJECTS AND SUMMARY OF THE INVENTION"
+        ],
+        "visual_desc": [
+            "BRIEF DESCRIPTION OF THE DRAWINGS",
+            "BRIEF DESCRIPTION OF THE SEVERAL VIEW OF THE DRAWING",
+            "BRIEF DESCRIPTION OF THE INVENTION",
+            "DESCRIPTION OF DRAWINGS"
+        ],
+        "detail_desc": [
+            "DETAILED DESCRIPTION",
+            "DETAILED DESCRIPTION OF THE INVENTION",
+            "DESCRIPTION OF THE PREFERRED EMBODIMENTS",
+            "DETAILED DESCRIPTION OF THЕ DISCLOSURE",
+            "DESCRIPTION OF EMBODIMENTS",
+            "DESCRIPTION OF EMBODIMENTS OF THE PRESENT INVENTION"
         ]
+    }
+        all_patterns = []
+        pattern_to_category = {}
+        
+        for category, titles in section_mapping.items():
+            for title in titles:
+                pattern = self.nlp.make_doc(title)
+                all_patterns.append(pattern)
+                pattern_to_category[title] = category
         
         # Initialize the PhraseMatcher
-        matcher = PhraseMatcher(self.nlp.vocab)
-        patterns = [self.nlp.make_doc(title) for title in section_titles]
-        matcher.add("SECTION_TITLES", patterns)
+        matcher = PhraseMatcher(self.nlp.vocab)  # Case-insensitive matching
+        matcher.add("SECTION_TITLES", None, *all_patterns)
         
         # Process the text
         doc = self.nlp(text)
         matches = sorted(matcher(doc), key=lambda x: x[1])
         
-        prev_title = None
-        prev_end = 0
+        # Initialize dictionary to store sections
+        for category in section_mapping.keys():
+            self.json_temp[category] = ""
         
-        # Iterate through the matches to extract sections
-        for match_id, start_match, end_match in matches:
-            section_title = doc[start_match:end_match].text
+        # If no matches were found, store entire text in detail_desc
+        if not matches:
+            self.json_temp["detail_desc"] = doc.text.strip()
+            return
+        
+        # Process matches
+        for i, (match_id, start_match, end_match) in enumerate(matches):
+            current_title = doc[start_match:end_match].text
+            current_category = pattern_to_category.get(current_title.upper(), None)
             
-            # Extract text between section titles and assign it to the correct field
-            if prev_end != 0:
-                section_content = doc[prev_end:start_match].text.strip()
-                
-                if prev_title in ["FIELD", "FIELD OF INVENTION"]:
-                    self.json_temp["field"] = section_content
-                elif prev_title in ["SUMMARY", "SUMMARY OF INVENTION"]:
-                    self.json_temp["summary"] = section_content
-                elif prev_title == "BACKGROUND":
-                    self.json_temp["background"] = section_content
-                elif prev_title == "DESCRIPTION OF DRAWINGS":
-                    self.json_temp["visual_desc"] = section_content
-                elif prev_title in ["DETAILED DESCRIPTION", "DESCRIPTION OF EMBODIMENTS"]:
-                    self.json_temp["detail_desc"] = section_content
-            
-            # Update the previous section title and end position
-            prev_title = section_title
-            prev_end = end_match
-
-            if section_title in ["DETAILED DESCRIPTION", "DESCRIPTION OF EMBODIMENTS"]:
-                self.json_temp["detail_desc"] = doc[end_match:].text
+            # If this is the last section
+            if i == len(matches) - 1:
+                # Get content from end of title to end of document
+                content = doc[end_match:].text.strip()
+                if current_category:
+                    self.json_temp[current_category] = content
+            else:
+                # Get content from end of this title to start of next title
+                next_start = matches[i+1][1]
+                content = doc[end_match:next_start].text.strip()
+                if current_category:
+                    self.json_temp[current_category] = content
+        
+        # Handle first section (content before first match)
+        if matches and matches[0][1] > 0:
+            first_content = doc[:matches[0][1]].text.strip()
+            if first_content:
+                # Store content before first section in detail_desc as fallback
+                self.json_temp["detail_desc"] = first_content
     
-    def retrieveClaims(self, filename:str):
-        link_template= f"https://ppubs.uspto.gov/dirsearch-public/patents/html/{filename}?source=US-PGPUB&requestToken={token}"
-        driver = webdriver.Chrome(executable_path="/path/to/chromedriver")
-        driver.get(link)
-        time.sleep(2)
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        driver.quit()
+    def retrieveClaims(self, filename):
+        """
+        input: pdf filename
+        output: json format claims
+        """
+        token = "eyJzdWIiOiIxZTFhNGE1OS1kN2ZmLTQ1ZjMtOTc1MC0zN2QwNWVmOWE1M2YiLCJ2ZXIiOiI5MmNhNjA2Yy04YTU5LTQ2MjUtOTBhZC0zZDBkN2UxY2I4ZWQiLCJleHAiOjB9"
+        link_template = f"https://ppubs.uspto.gov/dirsearch-public/patents/html/{filename}?source=US-PGPUB&requestToken={token}"
+        gecko_driver_path = "/snap/bin/geckodriver"  
+        service = Service(gecko_driver_path)
+        driver = webdriver.Firefox(service=service)
         
+        driver.get(link_template)
+        time.sleep(10)
+        driver.quit()
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
         claims_header = soup.find('h3', text='Claims')
         if claims_header:
             claims_section = claims_header.find_parent('section')
             claims_text = claims_section.get_text(separator=' ', strip=True)
             self.json_temp["claims"]=claims_text
         else:
-            print("No 'Claims' section found.")
-        
+            raise KeyError("unable to access claims, wait for token access")
+       
 
     def prodConversion(self, file:str):
         """
@@ -160,4 +206,11 @@ class docProcessing:
             else:
                 remain += page_text
         self.section_processing(remain)
-        return json.dumps(self.json_temp)
+        match = re.search(r'(\d+)\.pdf$', file)
+        
+        if match:
+            inp= match.group(1)
+            self.retrieveClaims(inp)
+            return json.dumps(self.json_temp)
+        else:
+            raise KeyError ("the file format isn't PDF")
