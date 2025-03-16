@@ -204,11 +204,4 @@ class docProcessing:
             else:
                 remain += page_text
         self.section_processing(remain)
-        match = re.search(r'(\d+)\.pdf$', file)
-        
-        if match:
-            inp= match.group(1)
-            self.retrieveClaims(inp)
-            return json.dumps(self.json_temp)
-        else:
-            raise KeyError ("the file format isn't PDF")
+        return json.dumps(self.json_temp)

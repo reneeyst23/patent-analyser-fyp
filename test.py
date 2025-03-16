@@ -1,21 +1,28 @@
-from util import docProcessing
+import json
 import re
-d= docProcessing()
+import pandas as pd
+import os
+from util import docProcessing
 
-pattern = re.compile(r"(\d+)\.pdf\.txt")
+# Initialize the docProcessing object
+d = docProcessing()
 
-# Example filename
-path = "20240112227.pdf.txt"
+# Read the existing JSON file
+df = pd.read_json("test_data.json")
 
-# Extract the code from the filename
-match = pattern.search(path)
-if match:
-    code = match.group(1)  # Extract the numeric part (e.g., "20240112227")
-    print(f"Extracted code: {code}")
+# Initialize an empty list
+js = []
 
-    # Call the retrieveClaims function with the extracted code
-    d.retrieveClaims(code)
-    d.json_temp["code"]=code
-    print(d.json_temp)
-else:
-    print("No code found in the filename.")
+# List the files in the directory
+files = os.listdir("120_file")
+
+# Iterate through files and append the results from prodConversion()
+for file in files:
+    js.append(d.prodConversion())
+
+# Convert the list 'js' into JSON format and save it as a new file
+with open('output_data.json', 'w') as json_file:
+    json.dump(js, json_file)
+
+print("Data has been successfully written to output_data.json.")
+

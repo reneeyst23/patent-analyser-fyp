@@ -11,5 +11,4 @@ dependencies = [
     "pdf2image>=1.17.0",
     "pytesseract>=0.3.13",
     "selenium>=4.29.0",
-    "spacy>=3.6",
 ]
