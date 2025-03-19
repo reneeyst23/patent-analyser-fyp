@@ -19,7 +19,8 @@ class docProcessing:
             "summary":"",
             "visual_desc": "",
             "detail_desc":"",
-            "claims":""
+            "claims":"",
+            "annotation:"
         }
     def pdfConversion(self, file: str):
         """
@@ -29,10 +30,10 @@ class docProcessing:
         pages = pdf2image.convert_from_path(file)
         text = ""
         for page in pages:
-            page_text = pytesseract.image_to_string(page)
+            page_text = pytesseract.image_to_pdf_or_hocr(page, extension='hocr')
             page_text=page_text.replace("\n", " ")
             text += page_text + "\n"
-        self.printTXT(file, text)
+        return self.printTXT(file, text)
 
     def essentialInfo(self, stdment:str) -> list:
         """
@@ -66,7 +67,7 @@ class docProcessing:
         Output: txt file
         """
         txt_name = f"{name}_txt"
-        with open(txt_name, "a") as txt:
+        with open(txt_name, "a") as html:
             txt.write(strings)
             
         

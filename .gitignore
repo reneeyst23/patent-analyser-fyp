@@ -9,9 +9,7 @@ venv/
 env/
 
 # Ignore specific files
-120_file/
 sample/
-references/
 
 # Ignore IDE-specific files
 .vscode/
