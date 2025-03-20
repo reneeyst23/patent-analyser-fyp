@@ -13,7 +13,7 @@ function App() {
             Discover Sustainable Innovation
           </h2>
           <p className="mt-6 text-xl text-gray-600 max-w-4xl mx-auto">
-            Analyze and explore eco-friendly patents to drive environmental innovation
+            Analyze and explore eco-friendly patents to drive environmental innovation!
           </p>
         </div>
         <SearchBar />
