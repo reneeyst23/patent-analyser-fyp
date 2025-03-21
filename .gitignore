@@ -9,12 +9,11 @@ venv/
 env/
 
 # Ignore specific files
-sample/
+120_file/
 
 # Ignore IDE-specific files
 .vscode/
 .idea/
-.ruff_cache/
 
 # Ignore system files
 .DS_Store
