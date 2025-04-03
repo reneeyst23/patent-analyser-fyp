@@ -28,7 +28,7 @@ class DocProcessing:
         """
         Retrieve HTML content using Selenium WebDriver.
         """
-        token = "eyJzdWIiOiIzNzZmMDc2ZC1mZjg1LTRhYWEtYTE2NS01OGVjYjdiZDZiOGIiLCJ2ZXIiOiJjNmI0YzgxZi05Y2FiLTRjMjctYmFjNi03YmIxMTRmNzU3NjAiLCJleHAiOjB9"
+        token = "eyJzdWIiOiJiNmU0NDU0My02NjRlLTQwYzUtYjZhMC1hMmI1ZmM2N2ZiZTciLCJ2ZXIiOiJlMTNhODNiOC00NGY4LTQ5ZDUtYmY2ZS05MDBkNmU5YzQwOGEiLCJleHAiOjB9"
         link_template = f"https://ppubs.uspto.gov/dirsearch-public/patents/html/{filename}?source=US-PGPUB&requestToken={token}"
         gecko_driver_path = "/snap/bin/geckodriver"
         service = Service(gecko_driver_path)
@@ -97,13 +97,12 @@ class DocProcessing:
         # Extract Background/Summary
         backsum_header = soup.find('h3', text='Background/Summary')
         if backsum_header:
-        # Initialize an empty list to collect the text from the paragraphs
             paragraphs = []
             current_element = backsum_header.find_next()
             while current_element and current_element.name != 'h3':
                 if current_element.name == 'p':
                     paragraphs.append(current_element.text.strip())
-                current_element = current_element.find_next()  # Move to the next element
+                current_element = current_element.find_next()
                 
         background_summary = ' '.join(paragraphs)
         self.json_temp["background_summary"]=background_summary
@@ -113,5 +112,7 @@ class DocProcessing:
             self.json_temp["description"] = desc
             
         self.retrieveClaims(page)
+
+
         
         
