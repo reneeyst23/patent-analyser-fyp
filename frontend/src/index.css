@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-emerald-600 text-white rounded-lg 
+           hover:bg-emerald-700 focus:outline-none focus:ring-2 
+           focus:ring-emerald-500 focus:ring-offset-2 transition-colors;
+  }
+}
+
+/* Smooth transitions */
+* {
+  @apply transition-colors duration-200;
+}
