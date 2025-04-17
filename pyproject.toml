@@ -5,24 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.9,<3.12"
 dependencies = [
-    "bli>=0.1.2b0",
-    "bs4>=0.0.2",
-    "deepsearch-toolkit>=2.0.1",
-    "faiss-cpu>=1.10.0",
-    "firestore>=0.0.8",
-    "haystack>=0.42",
-    "haystack-ai>=2.11.2",
-    "ipython==8.12.3",
-    "langchain>=0.3.22",
-    "nltk>=3.9.1",
-    "openai>=1.68.2",
-    "path>=17.1.0",
-    "pdf2image>=1.17.0",
-    "pytesseract>=0.3.13",
-    "python-dotenv>=1.0.1",
-    "qdrant-haystack>=9.1.1",
-    "rank-bm25>=0.2.2",
-    "selenium>=4.29.0",
-    "sentence-transformers>=4.0.1",
-    "together>=1.4.6",
+    "openai>=1.75.0",
+    "pydantic>=2.11.3",
+    "qdrant-client>=1.13.3",
 ]
