@@ -10,7 +10,6 @@ env/
 
 # Ignore specific files
 120_file/
-data_extraction/result.json
 
 
 # Ignore IDE-specific files

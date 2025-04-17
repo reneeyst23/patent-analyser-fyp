@@ -6,6 +6,11 @@ from openai import OpenAI
 
 class Classifier:
     def __init__(self, file:json):
+        """
+        DEVELOPER NOTE
+        docExpandExtractor(), searchExtraContext(), promptEnhancerAgent() are
+        auxuliary done after 1st iteration
+        """
         self.client = OpenAI()
         vectordb_key=os.getenv("VECTORDB")
         openai_key=os.getenv("OPENAI_API_KEY")
@@ -15,7 +20,6 @@ class Classifier:
             api_key=vectordb_key,
         )
         self.openai_client=OpenAI(api_key=openai_key)
-
     def docExpandExtractor(self, abstract: str) -> dict:
         # First, identify the main topic of the abstract, and then request 100 descriptions for that topic
         prompt = f"""
@@ -37,15 +41,14 @@ class Classifier:
 
         # Request the LLM to generate the expanded descriptions based on the abstract
         response = self.openai_client.Completion.create(
-            model="gpt-4",  # Use GPT-4 or any relevant model
+            model="gpt-4",
             prompt=prompt,
-            max_tokens=1000,  # Adjust the token limit as needed
+            max_tokens=1000,
             temperature=0.7
         )
         
         # Extract and return the response in JSON format
         try:
-            # The response text is expected to be in a JSON format
             response_json = json.loads(response.choices[0].text.strip())
             return response_json
         except json.JSONDecodeError:
@@ -72,11 +75,12 @@ class Classifier:
     def promptEnhancerAgent(self, context):
         return
 
-classifier=Classifier(None)
-abstract=""""A package of one or more absorbent articles is disclosed. The package includes a package material, wherein the package material 
-has natural fibers and exhibits an MD tensile strength of at least 5.0 kN/m and an MD Stretch of at least 3 percent, each as determined 
-via ISO 1924-3 as modified herein. The package further includes a plurality of panels, including a consumer-facing panel. The package is sealed.""""
-classifier.docExpandExtractor(abstract)
+if __name__ == "__main__":
+    classifier=Classifier(None)
+    abstract=""""A package of one or more absorbent articles is disclosed. The package includes a package material, wherein the package material 
+    has natural fibers and exhibits an MD tensile strength of at least 5.0 kN/m and an MD Stretch of at least 3 percent, each as determined 
+    via ISO 1924-3 as modified herein. The package further includes a plurality of panels, including a consumer-facing panel. The package is sealed.""""
+    classifier.docExpandExtractor(abstract)
         
         
 
