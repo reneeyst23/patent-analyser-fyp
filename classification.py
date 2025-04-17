@@ -1,6 +1,6 @@
 import json
 import os
-from qdrant_client import QdrantClient, models
+from qdrant_client import QdrantClient
 from qdrant_client.models import RecommendRequest, PointVector
 from openai import OpenAI
 
