@@ -1,5 +1,5 @@
-import json
-from util import DocProcessing
+mport json
+from data_extraction.textProcessing import DocProcessing
 
 # Initialize DocProcessing
 d = DocProcessing()
