@@ -77,9 +77,9 @@ class Classifier:
 
 if __name__ == "__main__":
     classifier=Classifier(None)
-    abstract=""""A package of one or more absorbent articles is disclosed. The package includes a package material, wherein the package material 
+    abstract="""A package of one or more absorbent articles is disclosed. The package includes a package material, wherein the package material 
     has natural fibers and exhibits an MD tensile strength of at least 5.0 kN/m and an MD Stretch of at least 3 percent, each as determined 
-    via ISO 1924-3 as modified herein. The package further includes a plurality of panels, including a consumer-facing panel. The package is sealed.""""
+    via ISO 1924-3 as modified herein. The package further includes a plurality of panels, including a consumer-facing panel. The package is sealed."""
     classifier.docExpandExtractor(abstract)
         
         
