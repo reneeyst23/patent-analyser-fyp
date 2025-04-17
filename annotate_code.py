@@ -3,21 +3,41 @@ from openai import OpenAI
 import os
 client = OpenAI(api_key='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')
 
-def annotate_patent_claims(claims_text):
-    prompt = (
-        "You are an expert patent analyst with deep knowledge of the 40 TRIZ principles. "
-        "For the following patent claims, classify each claim based on the applicable TRIZ principles. "
-        "Identify which TRIZ principle(s) are most relevant for each claim and provide a brief explanation for your classification.\n\n"
-        f"{claims_text}\n\n"
-        "Annotation:"
-    )
+def explain_claim_with_xai(claim_text):
+    prompt = f"""
+        You are a TRIZ expert and explainable AI assistant. Analyze the following patent claim and provide:
+
+        1. The most relevant TRIZ principle(s) (with number and name)
+        2. A clear explanation of why each principle applies
+        3. The engineering contradiction addressed
+        4. A confidence score (0-100%) based on your certainty
+        5. The specific part(s) of the claim that support your explanation
+        6. Optionally, suggest alternative TRIZ principles if applicable
+
+        Patent Claim:
+        \"\"\"{claim_text}\"\"\"
+
+        Format your response like this:
+
+        ---
+        Claim: [repeat the claim]
+        TRIZ Principle(s):
+        - Principle #: [Name]
+        Explanation: ...
+        Contradiction Addressed: ...
+        Confidence: __%
+        Supporting Text: "..."
+        Alternative TRIZ Suggestions (if any): ...
+        ---
+        """
 
     response = client.chat.completions.create(
-        model="gpt-4",  # or "gpt-4-turbo" if available to you
+        model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are a TRIZ expert specializing in eco-innovation and patent analysis."},
+            {"role": "system", "content": "You are a TRIZ expert specializing in patent explainability and innovation analysis."},
             {"role": "user", "content": prompt}
-        ]
+        ],
+        temperature=0.4
     )
 
     return response.choices[0].message.content
@@ -43,6 +63,6 @@ Claims
 15. A method of fighting a fire comprising the steps of applying fire extinguishing foam material produced in claim 7 to surfaces ignited or consumed by fire to be extinguished by said fire extinguishing foam material.
     """
     
-    annotations = annotate_patent_claims(sample_claims)
+    annotations = explain_claim_with_xai(sample_claims)
     print("Annotations:")
     print(annotations)
