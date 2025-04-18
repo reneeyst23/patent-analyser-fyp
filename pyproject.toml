@@ -5,7 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "langchain>=0.3.23",
     "openai>=1.75.0",
     "pydantic>=2.11.3",
     "qdrant-client>=1.13.3",
+    "selenium>=4.31.0",
 ]
