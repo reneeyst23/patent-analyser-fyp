@@ -1,21 +1,22 @@
 #!/bin/bash
 
-set -e
+set -e  # exit immediately on any error
 
 echo "📦 Setting up Patent Analyser FYP..."
 
-# Create .venv if it doesn't exist
+# Create virtual environment if it doesn't exist
 if [ ! -d ".venv" ]; then
-  echo "🔧 Creating virtual environment..."
-  uv venv
+  echo "🔧 Creating virtual environment using python3..."
+  python3 -m venv .venv
 fi
 
 # Activate the environment
 echo "✅ Activating environment..."
 source .venv/bin/activate
 
-# Install everything from requirements.txt
+# Install dependencies
 echo "📥 Installing dependencies from requirements.txt..."
-uv pip install --requirements requirements.txt
+uv pip install -r requirements.txt
 
-echo "🎉 Setup complete. You're ready to go!"
+echo "🎉 Setup complete. Virtual environment is active."
+echo "💡 You can now run: streamlit run app.py"
