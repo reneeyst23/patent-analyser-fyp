@@ -7,7 +7,9 @@ requires-python = ">=3.13"
 dependencies = [
     "langchain>=0.3.23",
     "openai>=1.75.0",
+    "polars>=1.27.1",
     "pydantic>=2.11.3",
     "qdrant-client>=1.13.3",
     "selenium>=4.31.0",
+    "sentence-transformers>=4.1.0",
 ]
