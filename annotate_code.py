@@ -2,67 +2,132 @@ from openai import OpenAI
 # Set your OpenAI API key
 import os
 client = OpenAI(api_key='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')
+import os
+import json
+import numpy as np
+from typing import List, Dict
+from openai import OpenAI
+from sklearn.metrics.pairwise import cosine_similarity
+import re
 
-def explain_claim_with_xai(claim_text):
-    prompt = f"""
-        You are a TRIZ expert and explainable AI assistant. Analyze the following patent claim and provide:
+def load_triz_principles(path: str) -> List[Dict]:
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-        1. The most relevant TRIZ principle(s) (with number and name)
-        2. A clear explanation of why each principle applies
-        3. The engineering contradiction addressed
-        4. A confidence score (0-100%) based on your certainty
-        5. The specific part(s) of the claim that support your explanation
-        6. Optionally, suggest alternative TRIZ principles if applicable
-
-        Patent Claim:
-        \"\"\"{claim_text}\"\"\"
-
-        Format your response like this:
-
-        ---
-        Claim: [repeat the claim]
-        TRIZ Principle(s):
-        - Principle #: [Name]
-        Explanation: ...
-        Contradiction Addressed: ...
-        Confidence: __%
-        Supporting Text: "..."
-        Alternative TRIZ Suggestions (if any): ...
-        ---
-        """
-
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a TRIZ expert specializing in patent explainability and innovation analysis."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.4
+def embed_texts(texts: List[str]) -> np.ndarray:
+    response = client.embeddings.create(
+        model="text-embedding-ada-002",
+        input=texts
     )
+    return np.array([r.embedding for r in response.data], dtype=np.float32)
+def explain_with_xai(claim: str, selected: List[Dict]) -> List[Dict]:
+    explanations = []
+    for p in selected:
+        user_msg = (
+            f"You are a TRIZ expert and explainable AI assistant.\n\n"
+            f"Analyze the patent claim below and explain why TRIZ Principle {p['number']} ({p['name']}) applies.\n"
+            f"Include:\n"
+            f"- A brief explanation\n"
+            f"- Supporting text from the claim\n"
+            f"Patent Claim:\n\"\"\"\n{claim}\n\"\"\""
+        )
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are a TRIZ expert specializing in patent analysis."},
+                    {"role": "user", "content": user_msg}
+                ],
+                temperature=0.3
+            )
+            explanation_text = response.choices[0].message.content.strip()
+        except Exception as e:
+            explanation_text = f"⚠️ Error generating explanation: {e}"
 
-    return response.choices[0].message.content
+        explanations.append({
+            "number": p["number"],
+            "name": p["name"],
+            "explanation": explanation_text
+        })
+    return explanations
 
+def filter_relevant_principles(claim_text: str, principles: List[Dict], threshold: float = 0.70) -> List[Dict]:
+    principle_texts = [p["description"] for p in principles]
+    embeddings = embed_texts([claim_text] + principle_texts)
+    claim_vec = embeddings[0].reshape(1, -1)
+    prin_vecs = embeddings[1:]
+    sims = cosine_similarity(claim_vec, prin_vecs)[0]
+
+    return [
+        {
+            "number": principles[i]["number"],
+            "name": principles[i]["name"],
+            "score": float(sims[i])
+        }
+        for i in range(len(principles)) if sims[i] >= threshold
+    ]
 
 if __name__ == "__main__":
-    sample_claims = """
-Claims 
-1. A fire extinguishing liquid foam concentrate to be mixed with a proportioned quantity of water, and then mixed with air within an aerating/aspirating foam forming nozzle to generate finished fire extinguishing foam material, said fire extinguishing liquid foam concentrate comprising: a dispersing agent in the form of a quantity of water, for dispersing metal ions dissolved in said quantity of water; a fire inhibiting agent in the form of at least one alkali metal salt of a nonpolymeric saturated carboxylic acid, for providing metal ions dispersed in the water when the at least one alkali metal salt is dissolved in said quantity of water; a foaming agent including hydrolyzed protein isolate (HPI) material dissolved in said quantity of water; and a dispersing agent in the form of an organic compound containing three carboxylic acid groups, or salt/ester derivatives thereof, for dispersing the metal ions in said quantity of water, and lowering the surface tension of the liquid solution formed by said fire inhibiting agent, said foaming agent and said dispersing agent dissolved in said quantity of water, to enable the forming of a fire extinguishing foam material when said liquid solution is mixed with air within an aerating/aspirating foam forming nozzle.
-2. The fire extinguishing liquid foam concentrate according to claim 1, wherein the alkali metal salt is a sodium or potassium salt.
-3. The fire extinguishing liquid foam concentrate according to claim 1, wherein the alkali metal salt is tripotassium citrate.
-4. The fire extinguishing liquid foam concentrate according to claim 1, wherein said coalescing agent is triethyl citrate, an ester of citric acid.
-5. A method of fighting a wildfire comprising the steps of applying the fire extinguishing foam material produced in claim 1 to the surfaces to be proactively protected from a wildfire.
-6. A method of fighting a fire comprising the steps of applying the fire extinguishing foam material produced in claim 1 to surfaces ignited or consumed by fire to be extinguished by said fire extinguishing foam material.
-7. An aqueous-based fire extinguishing liquid concentrate for mixing with a prespecified quantity of water to produce a fire extinguishing liquid solution that produces good immediate extinguishing effects when applied to extinguish a burning or smoldering fire, and very good long-term fire inhibiting effects when being proactively applied to protect combustible surfaces against the threat of fire, said aqueous-based fire extinguishing liquid concentrate comprises: a dispersing agent realized in the form of a quantity of water, for dispersing metal ions dissolved in water; a fire inhibiting agent in the form of at least one alkali metal salt of a nonpolymeric saturated carboxylic acid, for providing metal ions dispersed in the water when the at least one alkali metal salt is dissolved in said quantity of water; and a dispersing agent in the form of an organic compound containing three carboxylic acid groups or salt/ester derivatives thereof, such as triethyl citrate, an ester of citric acid, for dispersing the metal ions in said quantity of water, and lowering the surface tension of the liquid solution formed by said fire inhibiting agent, and said dispersing agent dissolved in said quantity of water, and forming a fire extinguishing liquid solution that produces good immediate extinguishing effects when applied to extinguish a burning or smoldering fire, and very good long-term fire inhibiting effects when being proactively applied to protect combustible surfaces against the threat of fire.
-8. The aqueous-based fire extinguishing liquid concentrate of claim 7, wherein said alkali metal salts of nonpolymeric saturated carboxylic acids for inclusion in the composition comprises: alkali metal salts of oxalic acid; alkali metal salts of gluconic acid; alkali metal salts of citric acid; and also alkali metal salts of tartaric acid.
-9. The aqueous-based fire extinguishing liquid concentrate of claim 7, wherein said alkali metal salts of nonpolymeric saturated carboxylic acids comprise potassium carboxylates.
-10. The aqueous-based fire extinguishing liquid concentrate of claim 7, wherein said alkali metal salts of nonpolymeric saturated carboxylic acids comprise tripotassium citrate monohydrate (TPC).
-11. The aqueous-based fire extinguishing liquid concentrate according to claim 7, wherein the alkali metal salt is a sodium or potassium salt.
-12. The aqueous-based fire extinguishing liquid concentrate according to claim 7, wherein the alkali metal salt is tripotassium citrate.
-13. The aqueous-based fire extinguishing liquid concentrate according to claim 7, wherein said coalescing agent is triethyl citrate, an ester of citric acid.
-14. A method of fighting a fire comprising the steps of applying fire extinguishing foam material produced in claim 7 to the surfaces to be proactively protected from a wildfire.
-15. A method of fighting a fire comprising the steps of applying fire extinguishing foam material produced in claim 7 to surfaces ignited or consumed by fire to be extinguished by said fire extinguishing foam material.
-    """
-    
-    annotations = explain_claim_with_xai(sample_claims)
-    print("Annotations:")
-    print(annotations)
+    # File paths
+    input_file = "result.json"
+    principles_file = "triz_principles.json"
+    output_file = "triz_output.json"
+    threshold = 0.70
+
+    # Load data
+    with open(input_file, 'r', encoding='utf-8') as f:
+        patent_docs = json.load(f)
+    principles = load_triz_principles(principles_file)
+
+    results = []
+
+    # Analyze each patent entry
+    for entry in patent_docs:
+        title = entry.get("essential_data", {}).get("title", "Untitled Patent")
+        claim_text = entry.get("claims", "").strip()
+
+        if not claim_text:
+            print(f"⚠️ Skipping patent '{title}' – no claims found.")
+            continue
+
+        print(f" Analyzing: {title}")
+
+        matched_principles = set()
+
+        try:
+            MAX_CHARS = 12000
+            if len(claim_text) <= MAX_CHARS:
+                # Normal path: process whole claim text
+                matched = filter_relevant_principles(claim_text, principles, threshold=threshold)
+                matched_principles.update((m["number"], m["name"]) for m in matched)
+            else:
+                print(f"⚠️ Claim too long, splitting into parts for: {title}")
+                split_claims = re.split(r'\b\d{1,3}\s*\.', claim_text)
+                split_claims = [c.strip() for c in split_claims if c.strip()]
+
+                for idx, split_claim in enumerate(split_claims):
+                    if len(split_claim) < 100:  
+                        continue
+                    try:
+                        matched = filter_relevant_principles(split_claim, principles, threshold=threshold)
+                        matched_principles.update((m["number"], m["name"]) for m in matched)
+                    except Exception as e:
+                        print(f"❌ Error analyzing claim {idx+1} in '{title}': {e}")
+                        continue
+
+        except Exception as e:
+            print(f"❌ Error processing full claim text in '{title}': {e}")
+            continue
+
+        principles_cleaned = [{"number": num, "name": name} for num, name in sorted(matched_principles)]
+
+        results.append({
+            "title": title,
+            "principles": principles_cleaned
+        })
+
+    # Write results to output file
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=2)
+
+    print(f"\n Saved results to {output_file}")
