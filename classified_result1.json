@@ -1,0 +1,1052 @@
+{
+    "metadata": {
+        "created_at": "2025-04-23",
+        "source": "model=gpt-40, temp=1, multi-shot (knowledgebase), limited knowledgebase",
+        "description": "Filtered data with TRIZ principles numbers extracted"
+    },
+    "data": [
+        {
+            "SerialCode": 20220031531,
+            "Results": {
+                "principles": [
+                    "30",
+                    "40",
+                    "3",
+                    "15",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220033159,
+            "Results": {
+                "principles": [
+                    "33",
+                    "34",
+                    "32",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220054876,
+            "Results": {
+                "principles": [
+                    "3",
+                    "34",
+                    "22"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220055720,
+            "Results": {
+                "principles": [
+                    "Homogeneity (Uniformity) (33)",
+                    "Self-Service (25)",
+                    "Local Quality (3)",
+                    "Copying (26)",
+                    "Dynamization (15)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220064521,
+            "Results": {
+                "principles": [
+                    "3",
+                    "15",
+                    "31",
+                    "33",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220073674,
+            "Results": {
+                "principles": [
+                    "15",
+                    "3",
+                    "31",
+                    "34",
+                    "33"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220287319,
+            "Results": {
+                "principles": [
+                    "Local Quality (3)",
+                    "Universality (6)",
+                    "Dynamization (15)",
+                    "Self-Service (25)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220316135,
+            "Results": {
+                "principles": [
+                    "40",
+                    "3",
+                    "34",
+                    "15"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220330472,
+            "Results": {
+                "principles": [
+                    "34",
+                    "22",
+                    "33",
+                    "3",
+                    "17"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220354803,
+            "Results": {
+                "principles": [
+                    "2",
+                    "28",
+                    "18",
+                    "36",
+                    "10",
+                    "40",
+                    "9"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220356097,
+            "Results": {
+                "principles": [
+                    "31",
+                    "38",
+                    "37",
+                    "33"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220370957,
+            "Results": {
+                "principles": [
+                    "Taking Out (Extraction) (2)",
+                    "Local Quality (3)",
+                    "Homogeneity (Uniformity) (33)",
+                    "Thermal Expansion (37)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220379742,
+            "Results": {
+                "principles": [
+                    "15",
+                    "1",
+                    "6",
+                    "3",
+                    "35",
+                    "32"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220381471,
+            "Results": {
+                "principles": [
+                    "15",
+                    "6",
+                    "3",
+                    "25",
+                    "17"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20220390137,
+            "Results": {
+                "principles": [
+                    "15",
+                    "13",
+                    "25"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230005640,
+            "Results": {
+                "principles": [
+                    "33",
+                    "34",
+                    "40",
+                    "15",
+                    "3",
+                    "28"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230014818,
+            "Results": {
+                "principles": [
+                    "3",
+                    "33",
+                    "6",
+                    "25"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230040439,
+            "Results": {
+                "principles": [
+                    "33",
+                    "34",
+                    "30",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230048153,
+            "Results": {
+                "principles": [
+                    "3",
+                    "6",
+                    "30",
+                    "31"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230062593,
+            "Results": {
+                "principles": [
+                    "3",
+                    "15",
+                    "31",
+                    "40"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230063745,
+            "Results": {
+                "principles": [
+                    "3",
+                    "30",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230072021,
+            "Results": {
+                "principles": [
+                    "35",
+                    "35",
+                    "26",
+                    "2",
+                    "3",
+                    "15",
+                    "36"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230079169,
+            "Results": {
+                "principles": [
+                    "3",
+                    "6",
+                    "15",
+                    "26",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230085576,
+            "Results": {
+                "principles": [
+                    "13",
+                    "15",
+                    "28",
+                    "25",
+                    "26"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230092645,
+            "Results": {
+                "principles": [
+                    "25",
+                    "26",
+                    "22",
+                    "24",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230242841,
+            "Results": {
+                "principles": [
+                    "34",
+                    "33",
+                    "3",
+                    "22"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230287600,
+            "Results": {
+                "principles": [
+                    "15",
+                    "3",
+                    "33",
+                    "22"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230332098,
+            "Results": {
+                "principles": [
+                    "3",
+                    "15",
+                    "34",
+                    "22",
+                    "33"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230378756,
+            "Results": {
+                "principles": [
+                    "Principle 3 - Local Quality",
+                    "Principle 15 - Dynamization",
+                    "Principle 10 - Preliminary Action",
+                    "Principle 34 - Discarding and Recovering"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230402845,
+            "Results": {
+                "principles": [
+                    "1",
+                    "4",
+                    "5",
+                    "10",
+                    "19",
+                    "24",
+                    "25",
+                    "35"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20230406138,
+            "Results": {
+                "principles": [
+                    "10",
+                    "19",
+                    "28",
+                    "3",
+                    "1"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240068117,
+            "Results": {
+                "principles": [
+                    "35",
+                    "29",
+                    "15",
+                    "10",
+                    "12"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240075457,
+            "Results": {
+                "principles": [
+                    "31",
+                    "40",
+                    "25"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240093882,
+            "Results": {
+                "principles": [
+                    "35",
+                    "23",
+                    "25",
+                    "2",
+                    "24"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240106243,
+            "Results": {
+                "principles": [
+                    "Segmentation",
+                    "Dynamization",
+                    "Universality (Multi-functionality)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240112227,
+            "Results": {
+                "principles": [
+                    "Dynamization",
+                    "Universality",
+                    "Local Quality",
+                    "Self-Service"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240113559,
+            "Results": {
+                "principles": [
+                    "1",
+                    "3",
+                    "5",
+                    "10",
+                    "19",
+                    "32",
+                    "34",
+                    "35",
+                    "40"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240126945,
+            "Results": {
+                "principles": [
+                    "1",
+                    "3",
+                    "15"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240138264,
+            "Results": {
+                "principles": [
+                    "3",
+                    "6",
+                    "16",
+                    "18",
+                    "19",
+                    "20"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240140238,
+            "Results": {
+                "principles": [
+                    "15",
+                    "3",
+                    "5",
+                    "4"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240141516,
+            "Results": {
+                "principles": [
+                    "6",
+                    "15",
+                    "25",
+                    "26"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240142178,
+            "Results": {
+                "principles": [
+                    "Parameter Changes (35)",
+                    "Phase Transitions (36)",
+                    "Feedback (23)",
+                    "Intermediary (24)",
+                    "Taking Out (Extraction) (2)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240146074,
+            "Results": {
+                "principles": [
+                    "13",
+                    "15",
+                    "25",
+                    "26"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240154414,
+            "Results": {
+                "principles": [
+                    "15",
+                    "17",
+                    "23",
+                    "24"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240212069,
+            "Results": {
+                "principles": [
+                    "15",
+                    "25",
+                    "26",
+                    "28"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240243360,
+            "Results": {
+                "principles": [
+                    "3",
+                    "14",
+                    "22",
+                    "33",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240243371,
+            "Results": {
+                "principles": [
+                    "1",
+                    "6",
+                    "3",
+                    "25",
+                    "15"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240250268,
+            "Results": {
+                "principles": [
+                    "31",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240250546,
+            "Results": {
+                "principles": [
+                    "Dynamization (15)",
+                    "Feedback (23)",
+                    "Self-Service (25)",
+                    "Intermediary (24)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240258665,
+            "Results": {
+                "principles": [
+                    "3",
+                    "15",
+                    "30"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240326631,
+            "Results": {
+                "principles": [
+                    "15",
+                    "25",
+                    "6",
+                    "13"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240327454,
+            "Results": {
+                "principles": [
+                    "2",
+                    "3",
+                    "5",
+                    "15",
+                    "25"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240327751,
+            "Results": {
+                "principles": [
+                    "33",
+                    "34",
+                    "15",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240327809,
+            "Results": {
+                "principles": [
+                    "3",
+                    "25",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240336042,
+            "Results": {
+                "principles": [
+                    "Flexible Shells and Thin Films (30)",
+                    "Homogeneity (33)",
+                    "Local Quality (3)",
+                    "Color Changes (32)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240336820,
+            "Results": {
+                "principles": [
+                    "Parameter Changes (Rule 35)",
+                    "Phase Transitions (Rule 36)",
+                    "Local Quality (Rule 3)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240337069,
+            "Results": {
+                "principles": [
+                    "34",
+                    "25",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240337416,
+            "Results": {
+                "principles": [
+                    "15",
+                    "2",
+                    "35",
+                    "36"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240352347,
+            "Results": {
+                "principles": [
+                    "15",
+                    "6",
+                    "22",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240353807,
+            "Results": {
+                "principles": [
+                    "3",
+                    "15",
+                    "17"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240356480,
+            "Results": {
+                "principles": [
+                    "15",
+                    "3",
+                    "14",
+                    "25",
+                    "13"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240360372,
+            "Results": {
+                "principles": [
+                    "2",
+                    "25",
+                    "15",
+                    "33"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240364114,
+            "Results": {
+                "principles": [
+                    "15",
+                    "3",
+                    "22"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240367753,
+            "Results": {
+                "principles": [
+                    "15",
+                    "12",
+                    "13",
+                    "6"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240368012,
+            "Results": {
+                "principles": [
+                    "34",
+                    "2",
+                    "15",
+                    "33"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240368333,
+            "Results": {
+                "principles": [
+                    "34",
+                    "25",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240368404,
+            "Results": {
+                "principles": [
+                    "3",
+                    "5",
+                    "6",
+                    "40"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240368502,
+            "Results": {
+                "principles": [
+                    "33",
+                    "34",
+                    "30",
+                    "3",
+                    "32"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240369206,
+            "Results": {
+                "principles": [
+                    "Curvature (14)",
+                    "Local Quality (3)",
+                    "Flexible Shells and Thin Films (30)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20240372172,
+            "Results": {
+                "principles": [
+                    "3",
+                    "35",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250065749,
+            "Results": {
+                "principles": [
+                    "15",
+                    "6",
+                    "23",
+                    "24"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250070310,
+            "Results": {
+                "principles": [
+                    "37",
+                    "3",
+                    "2"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250073283,
+            "Results": {
+                "principles": [
+                    "2",
+                    "15",
+                    "23",
+                    "35",
+                    "38"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250073614,
+            "Results": {
+                "principles": [
+                    "3",
+                    "30",
+                    "31"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250074772,
+            "Results": {
+                "principles": [
+                    "34",
+                    "22",
+                    "35",
+                    "36",
+                    "31"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250074851,
+            "Results": {
+                "principles": [
+                    "25",
+                    "26",
+                    "22",
+                    "15",
+                    "3",
+                    "33",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075012,
+            "Results": {
+                "principles": [
+                    "1",
+                    "35",
+                    "10",
+                    "2",
+                    "25"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075139,
+            "Results": {
+                "principles": [
+                    "15",
+                    "2",
+                    "34",
+                    "33",
+                    "25",
+                    "26",
+                    "38"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075150,
+            "Results": {
+                "principles": [
+                    "3",
+                    "33"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075151,
+            "Results": {
+                "principles": [
+                    "Flexible Shells and Thin Films (30)",
+                    "Homogeneity (Uniformity) (33)",
+                    "Discarding and Recovering (34)",
+                    "Local Quality (3)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075152,
+            "Results": {
+                "principles": [
+                    "Homogeneity (33)",
+                    "Discarding and Recovering (34)",
+                    "Inert Atmosphere (39)",
+                    "Mechanics Substitution (28)"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075222,
+            "Results": {
+                "principles": [
+                    "Homogeneity",
+                    "Discarding and Recovering",
+                    "Dynamization",
+                    "Local Quality",
+                    "Color Changes",
+                    "Self-Service",
+                    "Copying"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075236,
+            "Results": {
+                "principles": [
+                    "33",
+                    "34",
+                    "22",
+                    "3",
+                    "25",
+                    "15"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075242,
+            "Results": {
+                "principles": [
+                    "1",
+                    "6",
+                    "35",
+                    "23",
+                    "28",
+                    "15"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250075594,
+            "Results": {
+                "principles": [
+                    "2",
+                    "3",
+                    "5",
+                    "18",
+                    "19",
+                    "31",
+                    "37"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250077734,
+            "Results": {
+                "principles": [
+                    "3",
+                    "5",
+                    "6",
+                    "25",
+                    "33",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250078096,
+            "Results": {
+                "principles": [
+                    "15",
+                    "25",
+                    "34"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250079521,
+            "Results": {
+                "principles": [
+                    "10",
+                    "35",
+                    "37"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250079605,
+            "Results": {
+                "principles": [
+                    "15",
+                    "14",
+                    "3"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250079937,
+            "Results": {
+                "principles": [
+                    "13",
+                    "17",
+                    "25",
+                    "28"
+                ]
+            }
+        },
+        {
+            "SerialCode": 20250080464,
+            "Results": {
+                "principles": [
+                    "1",
+                    "2",
+                    "5",
+                    "12",
+                    "15",
+                    "19",
+                    "20",
+                    "23",
+                    "35"
+                ]
+            }
+        }
+    ]
+}

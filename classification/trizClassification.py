@@ -1,4 +1,3 @@
-from openai import OpenAI
 from qdrant_client import QdrantClient
 from pydantic import BaseModel, Field
 from typing import List, Union
@@ -15,12 +14,6 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # ✅ Output Schema
 class TRIZPrinciple(BaseModel):
     principles: List[Union[int, str]] = Field(..., description="A list of TRIZ principles, allowing both integers and strings")
-
-# 🔐 Load API keys
-OPENAI_KEY = os.getenv("OPENAI_API_KEY")
-
-# ✅ Initialize Clients
-openai_client = OpenAI(api_key=OPENAI_KEY)
 
 def retrieveContext(embeddings:list[float], pointLimit:int, collection_name:str)->str:
     VECTORDB_KEY = os.getenv("VECTORDB_KEY")
@@ -41,13 +34,15 @@ def classify_patent(model:LanguageModel, abstract: str, claims: str) -> TRIZPrin
     # 🔍 CoT Step: Extract main problem first
     extraction_prompt = Prompt.PROBLEM_EXTRACTION.value.format(claims=claims)
     extracted_problems=model.chat(extraction_prompt)
-
+    print(extracted_problems)
     # 🔍 CoT Step: Analyze the extracted problems into dimensions
     analysis_prompt = Prompt.PROBLEM_ANALYSIS.value.format(problems=extracted_problems)
     analysis_dimensions = model.chat(analysis_prompt)
+    print(analysis_dimensions)
 
     # 🧠 Step 1: Embed the analysis to guide vector search
     embedding=model.embed(analysis_dimensions)
+    print(embedding)
     
     # 📚 Step 2: Search vector DB using semantic dimensions
     extra_contexts=retrieveContext(embedding, 5, "knowledgebase")
@@ -89,6 +84,8 @@ def load_resultData(model:LanguageModel, file_location: str, output_file: str):
             parsed_data = literal_eval(entry["essential_data"])
             abstract = parsed_data.get("abstract", "")
             claims = entry["claims"]
+            if claims == "":
+                continue
             result = classify_patent(model, abstract, claims)
             formatted_entry = format_answer(result, serial_code)
 
@@ -98,7 +95,7 @@ def load_resultData(model:LanguageModel, file_location: str, output_file: str):
 
             output.write(formatted_entry)
 
-        output.write('\n]')  # End of JSON array
+        output.write('\n]')
         print(f"Streamed results have been saved to {output_file}")
     
 

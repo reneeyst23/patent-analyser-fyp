@@ -5,16 +5,23 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bs4>=0.0.2",
     "friendli>=0.7.4",
     "langchain>=0.3.23",
     "openai>=1.75.0",
-    "pandas>=2.2.3",
     "polars>=1.27.1",
     "pydantic>=2.11.3",
     "python-dotenv>=1.1.0",
     "qdrant-client>=1.13.3",
     "selenium>=4.31.0",
     "sentence-transformers>=4.1.0",
+    "together>=1.5.5",
     "torchvision>=0.21.0",
     "transformers>=4.51.3",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "uv>=0.6.16",
 ]
