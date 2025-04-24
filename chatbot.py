@@ -104,7 +104,7 @@ def clean_up_index():
         qdrant.delete_collection(collection_name=COLLECTION_NAME)
         print(f"🗑️ Deleted collection '{COLLECTION_NAME}' from disk.")
 
-def main(json_path):
+def chatbot_main(json_path):
     print("🔄 Loading patent text and indexing...")
     full_text = load_extracted_text(json_path)
     chunks, vectors = embed_chunks(full_text)
@@ -124,4 +124,4 @@ def main(json_path):
         memory.save_context({"query": query}, {"output": answer})
 
 if __name__ == "__main__":
-    main("extracted_text.json")
+    chatbot_main("extracted_text.json")
