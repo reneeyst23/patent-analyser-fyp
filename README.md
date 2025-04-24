@@ -34,6 +34,19 @@ To get started with the collaboration, please read the following steps:
 
     source setup.sh
 
+or 
+
+(Windows)
+1. Install all requirements
+
+    pip install -r requirements.txt
+
+2. Building frontend
+
+cd frontend
+npm i
+npm run dev
+
 To run the app:
 
 streamlit run app.py

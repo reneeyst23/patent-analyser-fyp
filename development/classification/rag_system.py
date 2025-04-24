@@ -246,5 +246,5 @@ def main(json_filename):
         print("\nAssistant:", answer)
         memory.save_context({"input": query}, {"output": answer})
 
-if __name__ == "__main__":
-    main("extracted_text.json")
+# if __name__ == "__main__":
+#     main("extracted_text.json")
