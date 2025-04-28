@@ -12,6 +12,9 @@ class LanguageModel(ABC):
     @abstractmethod
     def embed(self, text: str) -> list[float]:
         pass
+    
+    def get_embeddingSize(self) -> int:
+        pass
 
 class Openai(LanguageModel):
     def __init__(self, key: str):
@@ -39,6 +42,9 @@ class Openai(LanguageModel):
             model=model
         )
         return embedding.data[0].embedding
+    
+    def get_embeddingSize(self):
+        return 1536
 
 class TogetherAI(LanguageModel):
     def __init__(self, api_key: str):
@@ -67,6 +73,9 @@ class TogetherAI(LanguageModel):
             model=model
         )
         return embedding.data[0].embedding
+    
+    def get_embeddingSize(self):
+        return 1536
         
 
 
