@@ -26,41 +26,45 @@ def retrieveContext(embeddings:list[float], pointLimit:int, collection_name:str)
         query_vector=embeddings,
         limit=pointLimit
     )
-    extra_contexts = "\n\n".join(hit.payload.get("text", "") for hit in hits)
-    return extra_contexts
+    res=""
+    for point in hits:
+        res+=("\n"+ point.payload["text"])
+    return res
+
     
 # 🚀 Patent Classification Pipeline with CoT before vector search
 def classify_patent(model:LanguageModel, abstract: str, claims: str) -> TRIZPrinciple:
-    # 🔍 CoT Step: Extract main problem first
+    steps={}
+    # 🔍 CoT Step 1: Extract main problem first
     extraction_prompt = Prompt.PROBLEM_EXTRACTION.value.format(claims=claims)
-    extracted_problems=model.chat(extraction_prompt)
-    print(extracted_problems)
-    # 🔍 CoT Step: Analyze the extracted problems into dimensions
-    analysis_prompt = Prompt.PROBLEM_ANALYSIS.value.format(problems=extracted_problems)
-    analysis_dimensions = model.chat(analysis_prompt)
-    print(analysis_dimensions)
-
-    # 🧠 Step 1: Embed the analysis to guide vector search
-    embedding=model.embed(analysis_dimensions)
-    print(embedding)
+    extracted_problems=model.chat(extraction_prompt, 3)
+    steps["extraction"]=extracted_problems
     
-    # 📚 Step 2: Search vector DB using semantic dimensions
-    extra_contexts=retrieveContext(embedding, 5, "knowledgebase")
-
+    embedding=model.embed(extracted_problems)
+    extra_contexts=retrieveContext(embedding, 5, "allenAI_chemData")
+    
+    # 🔍 CoT Step 2: Analyze the extracted problems into dimensions
+    analysis_prompt = Prompt.PROBLEM_ANALYSIS.value.format(problems=extracted_problems, reasoning_trace=extra_contexts)
+    analysis_dimensions = model.chat(analysis_prompt, 7)
+    steps["analysis"]=analysis_dimensions
+    
     # 📘 Step 3: Create TRIZ rule
-    rule_prompt = Prompt.RULE_CREATION.value.format(extra_contexts=extra_contexts)
-    dynamic_rule=model.chat(rule_prompt)
+    rule_prompt = Prompt.RULE_CREATION.value.format(analysis=analysis_dimensions)
+    dynamic_rule=model.chat(rule_prompt, 2)
+    steps["extraContext"]=dynamic_rule
 
-    # 🧪 Step 4: Classify with rule
+    # 🧪 Step 5: Classify with rule
     classification_prompt = Prompt.FINAL_CLASSIFICATION.value.format(
         dynamic_rule=dynamic_rule,
         abstract=abstract,
         claims=claims
     )
-    json_string = model.chat(classification_prompt)
+    
+    json_string = model.chat(classification_prompt, 0)
     json_data = json_string.strip("```json\n").strip("\n```")
     parsed_output = TRIZPrinciple.model_validate_json(json_data)
-    return parsed_output
+    steps["final"]=parsed_output
+    return steps
 
 def format_answer(result: TRIZPrinciple, serial_code: str) -> str:
     """Formats the output with serial code and TRIZ results."""

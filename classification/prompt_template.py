@@ -4,10 +4,14 @@ class Prompt(Enum):
     RULE_CREATION = """
     You are an expert in patent classification and TRIZ principles. 
     CAPPED AROUND 200 WORDS
-    Based on the following contexts, create a dynamic rule on 40 principles, don't merge different principles together
+    Based on the following contexts, create a dynamic rule on 40 principles with this format (points, with dynamic definition, and dynamic short examples)
+    DON'T MERGE OR COMBINE ANY TRIZ PRINCIPLE
+    ONLY OUTPUT TRIZ PRINCIPLE YOU THINK CORRELATE WITH THIS DESCRIPTION.
 
-    Relevant TRIZ background knowledge:
-    {extra_contexts}
+    Relevant TRIZ background knowledge from previous analysis:
+    {analysis}
+    
+    
     """
     PROBLEM_EXTRACTION = """
     You are a TRIZ expert, based on the instruction I give you, do this:
@@ -18,6 +22,7 @@ class Prompt(Enum):
     Patent Claims:
     {claims}
     """
+    
     PROBLEM_ANALYSIS = """
     You are a TRIZ expert, based on the instruction I give you, do this:
     Break the problem statement down into specific sustainability aspect
@@ -26,6 +31,10 @@ class Prompt(Enum):
     How it's manipulated (e.g reduction, optimization, shape changes, material changes)
     Problem points:
     {problems}
+    
+    reasoning in certain subjects: 
+    {reasoning_trace}
+    
     Output: points of different dimensions being used
     """
     FINAL_CLASSIFICATION = """
