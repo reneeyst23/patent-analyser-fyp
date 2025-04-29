@@ -8,13 +8,15 @@ from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
+from openai import OpenAI, OpenAIError
 
 # --- Load environment variables ---
 load_dotenv()
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # --- Configurations ---
-QDRANT_HOST = "localhost"  # Local Qdrant instance
-QDRANT_API_KEY = None  # Not needed for local use
+QDRANT_HOST = "localhost"
+QDRANT_API_KEY = None
 COLLECTION_NAME = "patent_chunks"
 MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -99,23 +101,62 @@ Assistant:"""
     response = llm.predict(prompt)
     return response.strip()
 
+def generate_suggested_questions(summary: str) -> list:
+    """Call OpenAI to generate suggested questions based on the patent summary."""
+    prompt = f"""
+You are a helpful assistant. Based on the following patent summary, suggest 5 intelligent and relevant questions that a user might want to ask about this patent.
+Make sure the questions are open-ended, technical, and focused on clarifying key aspects.
+
+Patent Summary:
+{summary}
+
+Output format: A Python list of strings.
+"""
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=300,
+            temperature=0.5
+        )
+        generated = response.choices[0].message.content.strip()
+        suggested_questions = eval(generated)
+        return suggested_questions
+    except Exception as e:
+        print(f"Error generating suggested questions: {e}")
+        return []
+
 def clean_up_index():
     if qdrant.collection_exists(collection_name=COLLECTION_NAME):
         qdrant.delete_collection(collection_name=COLLECTION_NAME)
         print(f"🗑️ Deleted collection '{COLLECTION_NAME}' from disk.")
 
-def chatbot_main(json_path):
+def chatbot_main(json_path, summary):
     print("🔄 Loading patent text and indexing...")
     full_text = load_extracted_text(json_path)
     chunks, vectors = embed_chunks(full_text)
     create_qdrant_index(chunks, vectors)
 
+    suggested_questions = generate_suggested_questions(summary)
+
     print("✅ System ready. Start chatting!")
+    print("\nYou can ask your own question, or choose from the suggestions below:")
+    for idx, question in enumerate(suggested_questions, start=1):
+        print(f"{idx}. {question}")
+    print("Type your question or enter the number corresponding to a suggested question.")
+
     while True:
         query = input("\nYour Question ('exit' to quit): ")
         if query.lower() == "exit": 
             clean_up_index()
             break
+
+        if query.isdigit():
+            idx = int(query)
+            if 1 <= idx <= len(suggested_questions):
+                query = suggested_questions[idx - 1]
+                print(f"\nYou selected: {query}")
+
         retrieved = retrieve_chunks(query)
         reranked = rerank_chunks(query, retrieved)
         context = "\n\n".join(reranked)
@@ -124,4 +165,4 @@ def chatbot_main(json_path):
         memory.save_context({"query": query}, {"output": answer})
 
 if __name__ == "__main__":
-    chatbot_main("extracted_text.json")
+    chatbot_main("extracted_text.json", summary="")
