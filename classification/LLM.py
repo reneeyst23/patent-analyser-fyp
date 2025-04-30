@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 from together import Together
 from typing import Union, List, Dict
 import os
@@ -76,6 +76,8 @@ class TogetherAI(LanguageModel):
     
     def get_embeddingSize(self):
         return 1536
+        
+        
         
 
 

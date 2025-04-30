@@ -17,27 +17,9 @@ least one bio-resorbable polyester by concentration and drying the nanoparticles
 The process according to claim 1, wherein the organic phase (OP) comprises the first solvent or solvent mixture S1, which is not or only partially miscible with the second solvent or solvent mixture S2 of the aqueous phase (AP).
 3 . The process according to claim 1, wherein in d), the emulsion is an oil-in-water (O\/W) emulsion. 4 . The process according to claim 1, wherein in d), the emulsion is a water-in-oil (W.sub.1\/O) emulsion, which is, before e),
 mixed and emulsified with an additional water phase (W.sub.2), to give a water-in-oil-in-water emulsion (W.sub.1\/O\/W.sub.2). 5 . The process according to claim 1, wherein the first solvent or solvent mixture S1 comprises dichloromethane, ethyl acetate, chloroform, benzyl alcohol, diethyl carbonate, dimethyl sulfoxide, methanol, propylene carbonate, isopropyl acetate, methyl acetate, methyl ethyl ketone, butyl lactate, isovaleric acid, or any mixture thereof. 6 . The process according to claim 1, wherein the second solvent or solvent mixture S2 comprises 60% or more and up to 100% by weight of water. 7 . The process according to claim 1, wherein the second solvent or solvent mixture S2 is not or only partially miscible with the first solvent or solvent mixture S1, so that the aqueous phase (AP) and the organic phase (OP) form separate phases after mixing. 8 . The process according to claim 1, wherein the aqueous phase (AP) comprises 0.1 to 10% by weight of the emulsion stabilizing agent. 9 . The process according to claim 1, wherein the aqueous extraction phase (EP) comprises 80% by weight or more of water. 10 . The process according to claim 1, wherein the at least one bio-resorbable polyester is selected from the group consisting of a polyorthoester, a polylactide, a polydioxanone, a polycaprolactone, a polytrimethyl carbonate, a polyglycolide, a poly(lactide-co-glycolide), a poly(lactide-co-caprolactone), a poly(lactide-co-trimethyl carbonate), a poly(lactide-co-polyethylene-glycol), and any blend thereof. 11 . The process according to claim 1, wherein the organic phase (OP) or the aqueous phase (AP) or both comprises) an active pharmaceutical ingredient. 12 . The process according to claim 1, wherein in c), the stream of the organic phase (OP) is provided at a flow rate of 0.5 to 50 ml\/min, and the stream of the aqueous phase (AP) is provided at a flow rate of 1.5 to 150 ml\/min, with the proviso that the flow rate of the aqueous phase (AP) is higher than the flow rate of the organic phase (OP), resulting in an oil-in-water emulsion (O\/W) in d). 13 . The process according to claim 1, wherein in c), the stream of the organic phase (OP) is provided at a flow rate of 1.5 to 150 ml\/min, and the stream of the aqueous phase (AP) is provided at a flow rate of 0.5 to 50 ml\/min, with the proviso that the flow rate of the organic phase (OP) is higher than the flow rate of the aqueous phase (AP), resulting in a water-in-oil emulsion (W.sub.1\/O) in d). 14 . The process according to claim 1, wherein a residence time of the joint stream ultrasonic sound flow-through cell is from 0.5 to 80 seconds. 15 . The process according to claim 1, wherein a flow rate of the joint stream h ultrasonic sound flow-through cell is from 2 to 200 ml\/min. 16 . The process according to claim 4, wherein the water-in-oil (W.sub.1\/O) emulsion is mixed and emulsified with the additional water phase (W.sub.2) by a static mixer or a further sonication flow-through cell. 17 . The process according to claim 8, wherein the emulsion stabilizing agent is polyvinyl alcohol or polysorbate.
-
 """
+topic=['Nanotechnology', 'Materials Science', 'Chemical Engineering']
+problems={'primary': ['Preparation of nanoparticles using emulsion-solvent extraction or evaporation with ultrasonic sound application.'], 'secondary': ['Formation of stable emulsions using organic and aqueous phases.', 'Removal of solvents to form nanoparticles.', 'Control of nanoparticle size and polydispersity index.'], 'combination': ['Combining emulsion-solvent techniques with ultrasonic sound to enhance nanoparticle formation.']}
+
 openai = Openai("OPENAI_KEY")
-
-# Store all results by step_name
-all_results = {}
-
-# Run the classification twice
-for i in range(2):
-    result_steps = classify_patent(openai, abstract, claims)
-    for step_name, output in result_steps.items():
-        if step_name not in all_results:
-            all_results[step_name] = []
-        all_results[step_name].append(output)
-
-# Build final markdown output
-markdown_output = ""
-for step_name, outputs in all_results.items():
-    markdown_output += f"### {step_name.upper()}\n\n"
-    for idx, output in enumerate(outputs, 1):
-        markdown_output += f"**Iteration {idx}:**\n\n"
-        markdown_output += f"```\n{output}\n```\n\n"
-
-print(markdown_output)
+print(classify_patent(openai, abstract, claims))

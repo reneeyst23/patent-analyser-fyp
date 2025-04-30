@@ -1,27 +1,53 @@
 from enum import Enum
 
 class Prompt(Enum):
+    topic_prompt="""
+    Through this abstract:
+    - extract main scientific topic this talked about
+    choices to select:
+    ['Medicinal Chemistry', 'Nanotechnology', 'Electrochemistry', 'Chemical Engineering', 'Biochemistry', 'Physical Chemistry', 'Analytical Chemistry', 'Thermodynamics', 'Inorganic Chemistry', 'Organic Chemistry', 'Astrochemistry', 'Quantum Chemistry', 'Materials Science', 'Polymer Chemistry', 'Industrial Chemistry', 'Green Chemistry', 'Surface Chemistry', 'Solid State Chemistry', 'Supramolecular Chemistry', 'Photochemistry', 'Computational Chemistry', 'Environmental Chemistry', 'Theoretical Chemistry', 'Radiochemistry', 'electrical engineering]
+    RETURN IN A LIST OF STRING FORMAT(Python)
+    ANSWER CAN BE MAX 4 TOPICS
+    {abstract}
+    """
     RULE_CREATION = """
-    You are an expert in patent classification and TRIZ principles. 
-    CAPPED AROUND 200 WORDS
-    Based on the following contexts, create a dynamic rule on 40 principles with this format (points, with dynamic definition, and dynamic short examples)
-    DON'T MERGE OR COMBINE ANY TRIZ PRINCIPLE
-    ONLY OUTPUT TRIZ PRINCIPLE YOU THINK CORRELATE WITH THIS DESCRIPTION.
+    You are an expert in patent classification and TRIZ principles.
 
+    Your task:
+
+    1. Step-by-step, reason which TRIZ principles best match the following analysis dimensions.
+    2. Select the most appropriate TRIZ principle(s) without merging or combining different principles.
+    3. Write your reasoning and selected principle(s) in clear points.
+
+    Instructions:
+    - Limit your full response to around 200 words.
+    - For each selected TRIZ principle, include:
+    - A dynamic definition based on the analysis.
+    - A dynamic short example relevant to the context.
+    - Only output TRIZ principles you find directly correlated to the provided description.
+    - Do NOT invent new principles or combine multiple TRIZ rules into one.
+    - output in example output
+    
     Relevant TRIZ background knowledge from previous analysis:
     {analysis}
-    
-    
     """
     PROBLEM_EXTRACTION = """
-    You are a TRIZ expert, based on the instruction I give you, do this:
-    Instruction: extract primary problem from patent claims related to eco-solutions, what's this patent trying to solve
-        example: input: The invention involves a process for improving the energy efficiency of solar panels by reducing material waste during production
-                 output: Improve the energy efficiency of solar panels by minimizing material waste during production.
-    Output: descriptive points of primary and secondary problems, combination of different primary problems
-    Patent Claims:
+    You are a TRIZ expert specializing in eco-solutions. Your task is:
+
+    1. Extract the **primary problem** that the patent claims are trying to solve.
+    2. Extract **secondary problems** if mentioned.
+    3. Identify any **combinations** of primary problems.
+
+    📝 Expected Output:
+    - Format: A Python dictionary with keys: "primary", "secondary", "combination", each containing a list of strings.
+    - Example:
+
+    Input Patent Claims:
     {claims}
-    """
+    
+    Output format in Python dtype:
+    Dict[List[str]]
+        """
     
     PROBLEM_ANALYSIS = """
     You are a TRIZ expert, based on the instruction I give you, do this:
@@ -43,9 +69,6 @@ class Prompt(Enum):
     
     Dynamic Rule:
     {dynamic_rule}
-
-    Patent Abstract:
-    {abstract}
 
     Patent Claims:
     {claims}
