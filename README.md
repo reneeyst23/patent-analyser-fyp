@@ -1,53 +1,29 @@
 # patent-analyser-fyp
 
 To get started with the collaboration, please read the following steps:
-1. Open your terminal and install pipx if you do not have it
 
-    ✅ Method 1: (Recommended) Install via pipx
-        If you have pipx: 
+Install the required dependencies:
+    `pip install -r requirements.txt`
 
-        pipx install uv
+Create .streamlit folder in the root of the repository and add a `secrets.toml` file:
+    `mkdir .streamlit`
+    `touch .streamlit/secrets.toml`
+    `touch .streamlit/config.toml`
 
-        Don't have pipx? Install it first:
+Fill in the `secrets.toml` file with the following information:
+    `environment = "development"`
 
-        python -m pip install --user pipx
-        python -m pipx ensurepath
+Fill in the `config.toml` file with the following information:
+    `[server]`
+    `runOnSave = true`
 
-        Then restart your terminal and run:
+File is default gitignored for security concerns, do not push them to git.
 
-        pipx install uv
+## Run QdrantClient
 
-    ✅ Method 2: Install via pipx (macOS)
+`docker run -p 6333:6333 -v qdrant_data:/qdrant/storage qdrant/qdrant`
 
-        python3 -m pip install --user pipx
-        python3 -m pipx ensurepath
+## To run the app frontend
 
-        Then restart your terminal and run:
-
-        pipx --version
-
-2. Install uv using pipx
-
-    pipx install uv
-
-3. Connect to the collaboration:
-
-    source setup.sh
-
-or 
-
-(Windows)
-1. Install all requirements
-
-    pip install -r requirements.txt
-
-2. Building frontend
-
-cd frontend
-npm i
-npm run dev
-
-To run the app:
-
-streamlit run app.py
+`streamlit run app.py`
 

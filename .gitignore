@@ -11,10 +11,13 @@ env/
 # Ignore specific files
 120_file/
 
-
 # Ignore IDE-specific files
 .vscode/
 .idea/
 
 # Ignore system files
 .DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
