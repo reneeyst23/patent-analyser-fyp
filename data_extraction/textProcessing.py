@@ -9,7 +9,9 @@ import time
 class DocProcessing:
     def __init__(self):
         self.json_temp = {
-            "essential_data": "",
+            "title":"",
+            "inventor":"",
+            "abstract":"",
             "background_summary": "",
             "description": "",
             "claims": "",
@@ -84,8 +86,12 @@ class DocProcessing:
             'date': publication_date,
             'abstract': abstract_text
         }
-        self.json_temp["essential_data"] = result
-        return self.json_temp
+        self.json_temp["title"]=title
+        self.json_temp["inventor"]=inventor_name
+        self.date["date"]=publication_date
+        self.abstract["abstract"]=abstract_text
+        
+        return result
 
     def section_processing(self, page: str):
         """

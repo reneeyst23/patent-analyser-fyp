@@ -11,6 +11,7 @@ env/
 # Ignore specific files
 120_file/
 debugging.txt
+.env
 
 
 # Ignore IDE-specific files

@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
-from openai import OpenAI, AsyncOpenAI
+from openai import OpenAI
 from together import Together
 from typing import Union, List, Dict
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
+
 
 class LanguageModel(ABC):
     @abstractmethod
@@ -13,6 +17,7 @@ class LanguageModel(ABC):
     def embed(self, text: str) -> list[float]:
         pass
     
+    @abstractmethod
     def get_embeddingSize(self) -> int:
         pass
 
@@ -22,6 +27,7 @@ class Openai(LanguageModel):
         if not OPENAI_KEY:
             raise ValueError("API key for OpenAI not found in environment variables.")
         self.client = OpenAI(api_key=OPENAI_KEY)
+        self.tools=[]
 
     def chat(self, messages: Union[List[Dict[str, str]], str], temp: int, model: str = "gpt-4o") -> str:
         if isinstance(messages, str):
@@ -45,6 +51,7 @@ class Openai(LanguageModel):
     
     def get_embeddingSize(self):
         return 1536
+        
 
 class TogetherAI(LanguageModel):
     def __init__(self, api_key: str):
@@ -73,9 +80,6 @@ class TogetherAI(LanguageModel):
             model=model
         )
         return embedding.data[0].embedding
-    
-    def get_embeddingSize(self):
-        return 1536
         
         
         

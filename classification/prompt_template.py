@@ -73,9 +73,17 @@ class Prompt(Enum):
     Patent Claims:
     {claims}
     
-    "Output ONLY a valid JSON. No explanation or comments."
+    Output following this pydantic format
+    Dict[int, str] where int = number TRIZ and str = principle name
     
-    Output a JSON object with the following fields:
-    - uuid: a unique identifier for this patent
-    - principles: a list of TRIZ principles detected in the claims
     """
+
+    QnA_PROMPT ="""
+     Context:
+    {context}
+
+    Chat History:
+    {history}
+
+    User: {query}
+    Assistant:"""

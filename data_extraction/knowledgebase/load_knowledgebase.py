@@ -1,9 +1,8 @@
 import os
 import polars as pl
-import uuid
 from qdrant_client import QdrantClient
 from qdrant_client import Distance, VectorParams, PointStruct, models
-from langchain.text_splitter import RecursiveCharacterTextSplitter # type: ignore
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from typing import List
 from classification.LLM import LanguageModel
 
@@ -14,7 +13,7 @@ OPENAI_KEY = os.getenv("OPENAI_KEY")
 QDRANT_URL = os.getenv("QDRANT_URL")
 
 class VectorDBLoader:
-    def __init__(self, collection_name: str, dataset: pl.DataFrame, model: LanguageModel, api_key: str, qdrant_url: str, batch_size: int = 20):
+    def __init__(self, collection_name: str, dataset, model: LanguageModel, api_key: str, qdrant_url: str, batch_size: int = 20):
         self.qadrant_client = QdrantClient(
             url=qdrant_url,
             api_key=api_key

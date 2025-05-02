@@ -1,5 +1,5 @@
 from LLM import Openai
-from trizClassification import classify_patent, retrieveContext
+from trizClassification import PatentClassifier
 
 abstract =r"""
 'A process can be used for preparing nanoparticles containing at least one bio-resorbable polyester. 
@@ -22,4 +22,6 @@ topic=['Nanotechnology', 'Materials Science', 'Chemical Engineering']
 problems={'primary': ['Preparation of nanoparticles using emulsion-solvent extraction or evaporation with ultrasonic sound application.'], 'secondary': ['Formation of stable emulsions using organic and aqueous phases.', 'Removal of solvents to form nanoparticles.', 'Control of nanoparticle size and polydispersity index.'], 'combination': ['Combining emulsion-solvent techniques with ultrasonic sound to enhance nanoparticle formation.']}
 
 openai = Openai("OPENAI_KEY")
-print(classify_patent(openai, abstract, claims))
+classifier=PatentClassifier(openai)
+x=classifier.classify_patent(abstract, claims)
+print(x)

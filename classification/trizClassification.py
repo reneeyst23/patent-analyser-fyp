@@ -1,182 +1,141 @@
-from qdrant_client import QdrantClient, models
+from qdrant_client import QdrantClient
 from pydantic import BaseModel, Field
-from typing import List, Union, Dict
-from contextlib import ExitStack
-from prompt_template import Prompt
+from typing import List,Dict
+from collections import defaultdict
 import os
 import json
-from LLM import LanguageModel
-from ast import literal_eval
 import ast
 import numpy as np
 import cohere
-from collections import defaultdict
+from dotenv import load_dotenv
+from LLM import LanguageModel
+from prompt_template import Prompt
 
-def min_max_normalize(arr):
-    arr = np.array(arr, dtype=float)
-    min_val = np.min(arr)
-    max_val = np.max(arr)
-    if max_val - min_val == 0:
-        return np.zeros_like(arr)  # avoid division by zero
-    return (arr - min_val) / (max_val - min_val)
+load_dotenv()
+VECTORDB_KEY = os.getenv("VECTORDB_KEY")
+COHERE_KEY = os.getenv("COHERE_API_KEY")
+QDRANT_URL = os.getenv("QDRANT_URL")
 
-# ✅ Output Schema
+# 📦 Models
+class SearchResult(BaseModel):
+    """
+    Pydantic model for the base model from the RAG knowledgebase
+    """
+    text: str
+    score: float
+    topic: str
+
 class TRIZPrinciple(BaseModel):
-    principles: List[Union[int, str]] = Field(..., description="A list of TRIZ principles, allowing both integers and strings")
+    principles: Dict[int, str] = Field(...)
 
-def retrieveContext(llm, pointLimit: int, collection_name: str, topics: list[str], problem_dict: Dict[str, List[str]]) -> str:
-    co = cohere.Client("SrbWtPOb3iFAqpVe5HD2U6saj7a719TpPGRTfk35")
-    VECTORDB_KEY = os.getenv("VECTORDB_KEY")
+class PatentClassifier:
+    """
+    Patent Classifier that will instantiate in main.py
+    Input:
+        init LLM model connection
+        init QdrantDB connection
+        init Cohere reranker connection
+    """
+    def __init__(self, model: LanguageModel):
+        self.model = model
+        self.qdrant_client = QdrantClient(url=QDRANT_URL, api_key=VECTORDB_KEY)
+        self.cohere_client = cohere.Client(COHERE_KEY)
 
-    # Initialize the Qdrant client
-    qdrant_client = QdrantClient(
-        url="https://d59b4db7-bd08-4913-81bd-f37f96afc695.us-east-1-0.aws.cloud.qdrant.io:6333",
-        api_key=VECTORDB_KEY
-    )
+    def _get_weight_for_key(self, key: str) -> float:
+        """
+        function to get weight for each type of extracted problem
+        primary = 10x
+        secondary = 5x
+        combined = 1x
+        """
+        return {"primary": 10.0, "secondary": 5.0}.get(key, 1.0)
 
-    lst = []
-    for key, value in problem_dict.items():
-        for s in value:
-            encoded = llm.embed(s)
-            hits = qdrant_client.search(
-                collection_name=collection_name,
-                query_vector=encoded,
-                with_payload=True,
-                limit=25
-            )
-            for hit in hits:
-                if hit.payload["topic"] in topics:
-                    if key == "primary":
-                        adj_score = hit.score * 10
-                    elif key == "secondary":
-                        adj_score = hit.score * 5
+    def _deduplicate_results(self, results: List[SearchResult]) -> List[SearchResult]:
+        seen = set()
+        unique = []
+        for r in results:
+            if r.text not in seen:
+                seen.add(r.text)
+                unique.append(r)
+        return unique
+
+    def _min_max_normalize(self, arr: np.ndarray) -> np.ndarray:
+        arr = np.array(arr, dtype=float)
+        min_val, max_val = np.min(arr), np.max(arr)
+        return (arr - min_val) / (max_val - min_val) if max_val > min_val else np.zeros_like(arr)
+
+    def _search_vector_db(self, collection_name: str, topics: List[str], problem_dict: Dict[str, List[str]], point_limit: int) -> List[SearchResult]:
+        results = []
+        limit = point_limit // max(1, len(problem_dict))
+        for key, texts in problem_dict.items():
+            weight = self._get_weight_for_key(key)
+            for text in texts:
+                encoded = self.model.embed(text)
+                hits = self.qdrant_client.search(
+                    collection_name=collection_name,
+                    query_vector=encoded,
+                    with_payload=True,
+                    limit=limit
+                )
+                for hit in hits:
+                    topic=hit.payload["topic"]
+                    if topic in topics or hit.payload["discipline"] in topics:
+                        results.append(SearchResult(
+                            text=hit.payload["text"],
+                            score=hit.score * weight,
+                            topic=topic
+                        ))
                     else:
-                        adj_score = hit.score * 1
-                    lst.append((hit.payload["text"], adj_score, hit.payload["topic"]))
-                else:
-                    continue
+                        continue
+        return results
 
-    if not lst:
-        return ""
+    def _rerank_results(self, topics: List[str], results: List[SearchResult]) -> List[SearchResult]:
+        query = " ".join(topics)
+        documents = [r.text for r in results]
+        rerank = self.cohere_client.rerank(model="rerank-english-v3.0", query=query, documents=documents)
+        rerank_scores = [r.relevance_score for r in rerank.results]
+        norm_scores = self._min_max_normalize([r.score for r in results])
+        combined = 0.7 * np.array(rerank_scores) + 0.3 * norm_scores
+        return [r for (r, _) in sorted(zip(results, combined), key=lambda x: x[1], reverse=True)]
 
-    # Deduplicate by text content
-    seen = set()
-    unique_lst = []
-    for text, score, topic in lst:
-        if text not in seen:
-            seen.add(text)
-            unique_lst.append((text, score, topic))
+    def retrieve_context(self, point_limit: int, collection_name: str, topics: List[str], problem_dict: Dict[str, List[str]]) -> str:
+        results = self._search_vector_db(collection_name, topics, problem_dict, point_limit)
+        if not results:
+            return ""
 
-    # Normalize adj_scores
-    normalized_adj = min_max_normalize([s[1] for s in unique_lst])
+        deduped = self._deduplicate_results(results)
+        reranked = self._rerank_results(topics, deduped)
 
-    # Rerank using Cohere
-    query = " ".join(topics)
-    rerank_results = co.rerank(
-        model="rerank-english-v3.0",
-        query=query,
-        documents=[text for text, _, _ in unique_lst]
-    )
-    rerank_scores = [res.relevance_score for res in rerank_results.results]
-    combined_scores = 0.7 * np.array(rerank_scores) + 0.3 * normalized_adj
+        grouped = defaultdict(list)
+        for r in reranked:
+            if len(grouped[r.topic]) < 8:
+                grouped[r.topic].append(r.text)
 
-    reranked = sorted(
-        zip(unique_lst, combined_scores),
-        key=lambda x: x[1],
-        reverse=True
-    )
-    
-    topic_groups = defaultdict(list)
+        flat_results = [text for topic in grouped for text in grouped[topic]]
+        return "\n".join(flat_results)
 
-    for (text, _, topic), score in reranked:
-        if len(topic_groups[topic]) < 8:
-            topic_groups[topic].append(text)
+    def classify_patent(self, abstract: str, claims: str) -> TRIZPrinciple:
+        extraction_prompt = Prompt.PROBLEM_EXTRACTION.value.format(claims=claims)
+        topic_prompt = Prompt.topic_prompt.value.format(abstract=abstract)
+        analysis_prompt = Prompt.PROBLEM_ANALYSIS.value
+        rule_prompt = Prompt.RULE_CREATION.value
+        final_prompt = Prompt.FINAL_CLASSIFICATION.value
 
-    # Flatten the grouped results in order of topic
-    final_texts = []
-    for topic in topic_groups:
-        final_texts.extend(topic_groups[topic])
-    
-    return "\n".join(final_texts) 
-    
-# 🚀 Patent Classification Pipeline with CoT before vector search
-def classify_patent(model: LanguageModel, abstract: str, claims: str) -> dict:
+        problems_raw = self.model.chat(extraction_prompt, 3)
+        problems_dict = ast.literal_eval(problems_raw.strip("```python\n").strip("\n```"))
 
-    # Step 1: Extract problems and topics
-    extraction_prompt = Prompt.PROBLEM_EXTRACTION.value.format(claims=claims)
-    extracted_problems = model.chat(extraction_prompt, 3)
-    
-    topic_prompt = Prompt.topic_prompt.value.format(abstract=abstract)
-    list_string = model.chat(topic_prompt, 0)
+        topic_list = ast.literal_eval(self.model.chat(topic_prompt, 0).strip("```python\n").strip("\n```"))
 
-    # Clean the list_string and convert it to an actual list
-    cleaned_string = list_string.strip("```python\n").strip("\n```")
-    topics_list = ast.literal_eval(cleaned_string)
-    
-    problems_string = extracted_problems.strip("```python\n").strip("\n```")
-    problems_dict = ast.literal_eval(problems_string)
-    
-    extra_context=retrieveContext(model, 50, "allenAI_chemData", topics_list, problems_dict)
-    
-    analysis_prompt = Prompt.PROBLEM_ANALYSIS.value.format(problems=problems_dict, reasoning_trace=extra_context)
-    analysis = model.chat(analysis_prompt, 5)
-    
-    rule_prompt = Prompt.RULE_CREATION.value.format(analysis=analysis)
-    dynamic_rule=model.chat(rule_prompt, 2)
-    
-    classification_prompt = Prompt.FINAL_CLASSIFICATION.value.format(
-        dynamic_rule=dynamic_rule,
-        claims=claims
-    )
-    return  model.chat(classification_prompt, 0)
+        context = self.retrieve_context(50, "allenAI_chemData", topic_list, problems_dict)
+        analysis = self.model.chat(analysis_prompt.format(problems=problems_dict, reasoning_trace=context), 5)
+        dynamic_rule = self.model.chat(rule_prompt.format(analysis=analysis), 2)
 
+        final_output = self.model.chat(final_prompt.format(dynamic_rule=dynamic_rule, claims=claims), 0)
+        raw = final_output.strip().strip('```python').strip('```')
+        return raw
 
-    
-
-def format_answer(result: TRIZPrinciple, serial_code: str) -> str:
-    """Formats the output with serial code and TRIZ results."""
-    output = {
-        "SerialCode": serial_code,
-        "Results": result.dict()
-    }
-    return json.dumps(output, indent=2)
-
-def load_resultData(model:LanguageModel, file_location: str, output_file: str):
-
-    with open(file_location, 'r') as file:
-        data = json.load(file)
-
-    with ExitStack() as stack:
-        output = stack.enter_context(open(output_file, 'w'))
-        output.write('[\n')
-
-        for idx, entry in enumerate(data):
-            serial_code = entry.get("SerialCode", "")
-            parsed_data = literal_eval(entry["essential_data"])
-            abstract = parsed_data.get("abstract", "")
-            claims = entry["claims"]
-            if claims == "":
-                continue
-            result = classify_patent(model, abstract, claims)
-            formatted_entry = format_answer(result, serial_code)
-
-            # Proper comma separation
-            if idx > 0:
-                output.write(',\n')
-
-            output.write(formatted_entry)
-
-        output.write('\n]')
-        print(f"Streamed results have been saved to {output_file}")
-    
-
-
-# 🧪 Example usage
-if __name__ == "__main__":
-    load_resultData("data_extraction/result.json", "labelled_data.json")
-    
-    
-
-
-
-    
+    def format_result(self, result: TRIZPrinciple, serial_code: str) -> str:
+        return json.dumps({
+            "SerialCode": serial_code,
+            "Results": result.dict()
+        }, indent=2)
