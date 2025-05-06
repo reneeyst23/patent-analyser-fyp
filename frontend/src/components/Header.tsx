@@ -10,9 +10,9 @@ export default function Header() {
             <h1 className="ml-3 text-3xl font-bold text-gray-900">EcoPatent Analyzer</h1>
           </div>
           <nav className="flex space-x-12">
-            <a href="#" className="text-gray-600 hover:text-emerald-600">Dashboard</a>
+            {/* <a href="#" className="text-gray-600 hover:text-emerald-600">Dashboard</a>
             <a href="#" className="text-gray-600 hover:text-emerald-600">Analysis</a>
-            <a href="#" className="text-gray-600 hover:text-emerald-600">About</a>
+            <a href="#" className="text-gray-600 hover:text-emerald-600">About</a> */}
           </nav>
         </div>
       </div>

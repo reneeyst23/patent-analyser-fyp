@@ -5,7 +5,7 @@ from qdrant_client import QdrantClient, models
 from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 from langchain.memory import ConversationBufferMemory
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 from openai import OpenAI, OpenAIError
