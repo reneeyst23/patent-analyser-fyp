@@ -120,9 +120,7 @@ def embed_texts(texts, model=EMBED_MODEL, max_retries=3, delay=5):
                 print("Max retries reached for embedding texts.", file=sys.stderr)
                 raise
 
-# ── Model Training ─────────────────────────────────────────────────────────
 def train_model(X_train, y_train, classifier, principle_numbers):
-    """Trains the multi-label classifier, handling single-class labels."""
     print("Training model...")
     trainable_principle_indices = [
         i for i in range(y_train.shape[1])
@@ -148,8 +146,7 @@ def train_model(X_train, y_train, classifier, principle_numbers):
     print("Training individual estimators for trainable principles...")
     from joblib import Parallel, delayed
 
-    def train_single_estimator(estimator, X, y_col, principle_num):
-        """Helper function to train a single estimator."""
+    def train_single_estimator(estimator, X, y_col, principle_num): 
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
             estimator.fit(X, y_col)
@@ -169,7 +166,6 @@ def train_model(X_train, y_train, classifier, principle_numbers):
 
     print("Training complete.")
     return trained_model_components 
-# ── Model Evaluation ─────────────────────────────────────────────────────────
 def evaluate_model(trained_model_components, X_test, y_test, all_principle_numbers):
     """Evaluates the multi-label classifier using the trained components."""
     print("Evaluating model...")
