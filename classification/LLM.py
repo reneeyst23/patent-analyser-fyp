@@ -60,7 +60,7 @@ class TogetherAI(LanguageModel):
             raise ValueError("API key for TogetherAI not found in environment variables.")
         self.client = Together(api_key=TOGETHER_KEY)
 
-    def chat(self, messages: Union[List[Dict[str, str]], str], temp: int, model: str = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B") -> str:
+    def chat(self, messages: Union[List[Dict[str, str]], str], temp: int, model: str = "deepseek-ai/DeepSeek-V3") -> str:
         if isinstance(messages, str):
             messages = [
                 {"role": "system", "content": "You are a TRIZ expert."},

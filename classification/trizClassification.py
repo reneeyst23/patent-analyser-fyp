@@ -8,8 +8,8 @@ import ast
 import numpy as np
 import cohere
 from dotenv import load_dotenv
-from LLM import LanguageModel
-from prompt_template import Prompt
+from classification.LLM import LanguageModel
+from classification.prompt_template import Prompt
 
 load_dotenv()
 VECTORDB_KEY = os.getenv("VECTORDB_KEY")
@@ -24,6 +24,26 @@ class SearchResult(BaseModel):
     text: str
     score: float
     topic: str
+
+class ClassificationPipelineOutput(BaseModel):
+    extracted_problems: Dict[str, List[str]]
+    topics: List[str]
+    context: str
+    analysis: str
+    dynamic_rule: str
+    final_classification: str
+
+    def __str__(self):
+        parts = [
+            f"Extracted Problems:\n{self.extracted_problems}" if self.extracted_problems else "",
+            f"Topics:\n{', '.join(self.topics)}" if self.topics else "",
+            f"Context:\n{self.context}" if self.context else "",
+            f"Analysis:\n{self.analysis}" if self.analysis else "",
+            f"Dynamic Rule:\n{self.dynamic_rule}" if self.dynamic_rule else "",
+            f"Final Classification:\n{self.final_classification}" if self.final_classification else "",
+        ]
+        return "\n\n".join(part for part in parts if part.strip())
+    
 
 class TRIZPrinciple(BaseModel):
     principles: Dict[int, str] = Field(...)
@@ -78,13 +98,13 @@ class PatentClassifier:
                     limit=limit
                 )
                 for hit in hits:
-                    topic=hit.payload["topic"]
-                    if topic in topics or hit.payload["discipline"] in topics:
+                    topic_or_discipline = hit.payload.get("topic") or hit.payload.get("discipline")
+                    if topic_or_discipline in topics:
                         results.append(SearchResult(
-                            text=hit.payload["text"],
-                            score=hit.score * weight,
-                            topic=topic
-                        ))
+                                text=hit.payload["text"],
+                                score=hit.score * weight,
+                                topic=topic_or_discipline
+                            ))
                     else:
                         continue
         return results
