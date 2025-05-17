@@ -8,7 +8,7 @@
     "start": "react-scripts start",
     "frontend": "vite",
     "backend": "docker stop qdrant selenium-firefox backend || true && docker rm qdrant selenium-firefox backend || true && docker-compose up --build",
-    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "dev": "npm run frontend",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
