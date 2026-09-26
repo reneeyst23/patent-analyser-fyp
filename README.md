@@ -1,9 +1,3 @@
-To fix the instructions so they work properly on x64 systems, let's ensure that the instructions are clear, concise, and set up for proper platform compatibility. Since Docker is designed to be cross-platform and works on x64 architecture (which includes Intel and AMD processors), the existing instructions will mostly be the same. However, I’ll add a few points to ensure everything runs smoothly on x64 systems.
-
-Here’s the updated version of your `README` with additional clarity for x64 systems:
-
----
-
 # 🐳 Backend Patent Analyzer (Dockerized)
 
 ## 📦 Run the Docker Container
